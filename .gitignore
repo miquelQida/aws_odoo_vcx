@@ -1,0 +1,4 @@
+templates/
+out/
+charts/
+values-override*

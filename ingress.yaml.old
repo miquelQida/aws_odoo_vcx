@@ -1,0 +1,32 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: backend
+  name: odoo-external
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: |
+      odoo.be.vcxwt.qida.es
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/success-codes: 200,301,302
+    alb.ingress.kubernetes.io/certificate-arn: |
+      arn:aws:acm:eu-west-1:270777606181:certificate/7b5a2eec-1c13-465d-b461-c239f4fd64a4
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    alb.ingress.kubernetes.io/healthcheck-path: /web/health
+#    alb.ingress.kubernetes.io/wafv2-acl-arn: |
+#      arn:aws:wafv2:eu-west-1:270777606181:regional/webacl/VCX_WAF1/093f4f6b-7fd8-40c9-b2bc-64a222042950
+spec:
+  ingressClassName: alb
+  rules:
+    - host: odoo.be.vcxwt.qida.es
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: odoo
+                port:
+                  number: 8069
